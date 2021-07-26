@@ -1,9 +1,14 @@
 // import 'dart:html';
 
+// import 'dart:math';
+
+// import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:seven_screens/account.dart';
 import 'package:seven_screens/main.dart';
 // import 'package:hexcolor/hexcolor.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 void main() {
   runApp(MyAp());
@@ -31,6 +36,36 @@ class MyHomeScreen extends StatefulWidget {
 }
 
 class _MyHomeScreenState extends State<MyHomeScreen> {
+  late Razorpay _razorpay;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void openCheckout() async {
+    var options = {
+      'key': 'rzp_test_HyHKZ3MgASFCkE',
+      'amount': 2900,
+      'name': 'Lokesh',
+      'description': 'Payment',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,7 +179,22 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         color: Colors.white,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: Image.asset("assets/welcome.jpg"),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 30.0),
+              child: Image.asset("assets/welcome.jpg"),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 60.0),
+              child: ElevatedButton(
+                  onPressed: () {
+                    openCheckout();
+                  },
+                  child: Text("Complete the Payment")),
+            )
+          ],
+        ),
       ),
     );
   }
